@@ -1,329 +1,243 @@
-# LogiTrack
+# Examen Spring Boot - LogiTrack
 
-Sistema web para la gestión de bodegas, productos, inventario y movimientos logísticos desarrollado con **Spring Boot**, **PostgreSQL**, **Spring Security** y **JWT**.
+## Descripción
 
-El proyecto fue desarrollado siguiendo una arquitectura por capas (Controller, Service y Repository) aplicando buenas prácticas de desarrollo con Spring Boot.
+Este examen implementa un módulo REST de reportes para el proyecto **LogiTrack**. El módulo permite consultar movimientos de inventario y registros de auditoría utilizando filtros opcionales y consultas JPA.
 
----
+El desarrollo se encuentra dentro del paquete:
 
-# Características
+```text
+src/main/java/com/logitrack/examen
+```
 
-- Autenticación mediante JWT.
-- Registro de usuarios.
-- Gestión de productos.
-- Gestión de bodegas.
-- Gestión de inventario.
-- Registro de movimientos de inventario.
-- Auditoría de operaciones.
-- Documentación de la API con Swagger/OpenAPI.
-- Frontend desarrollado con HTML, CSS y JavaScript.
-- Base de datos PostgreSQL.
+## Objetivo
 
----
+Implementar endpoints REST que permitan obtener información consolidada de movimientos y auditorías mediante filtros combinables.
 
-# Tecnologías utilizadas
+## Estructura del módulo
 
-- Java 17
+```text
+src/main/java/com/logitrack/examen/
+├── ExamenMovimientoRepository.java
+├── ExamenAuditoriaRepository.java
+├── ExamenReporteService.java
+└── ExamenReporteController.java
+```
+
+## Tecnologías utilizadas
+
+- Java
 - Spring Boot
-- Spring Security
-- JWT (JSON Web Token)
+- Spring Web
 - Spring Data JPA
+- Spring Security
+- JWT
 - PostgreSQL
 - Maven
-- HTML5
-- CSS3
-- JavaScript
-- Swagger / OpenAPI
+- Thunder Client
 
----
+## Endpoints
 
-# Arquitectura
+### Consultar movimientos
 
-El proyecto utiliza una arquitectura por capas.
-
-```
-Cliente
-   │
-   ▼
-Controllers
-   │
-   ▼
-Services
-   │
-   ▼
-Repositories
-   │
-   ▼
-PostgreSQL
+```http
+GET /api/reportes/movimientos
 ```
 
----
+Parámetros opcionales:
 
-# Estructura del proyecto
+| Parámetro | Tipo | Ejemplo |
+|---|---|---|
+| `bodegaId` | `Long` | `1` |
+| `productoId` | `Long` | `4` |
+| `tipoMovimiento` | `TipoMovimiento` | `SALIDA` |
+| `fechaInicio` | `LocalDateTime` | `2026-07-01T00:00:00` |
+| `fechaFin` | `LocalDateTime` | `2026-07-30T23:59:59` |
 
-```
-src
-├── main
-│   ├── java
-│   │   └── com.logitrack
-│   │       ├── audit
-│   │       ├── config
-│   │       ├── controllers
-│   │       ├── dto
-│   │       ├── entities
-│   │       ├── enums
-│   │       ├── exceptions
-│   │       ├── repositories
-│   │       ├── security
-│   │       └── services
-│   │
-│   └── resources
-│       ├── static
-│       │   ├── css
-│       │   ├── js
-│       │   ├── login.html
-│       │   ├── index.html
-│       │   ├── productos.html
-│       │   ├── bodegas.html
-│       │   └── movimientos.html
-│       │
-│       ├── application.properties
-│       ├── schema.sql
-│       └── data.sql
+### Consultar auditorías
+
+```http
+GET /api/reportes/auditoria
 ```
 
----
+Parámetros opcionales:
 
-# Funcionalidades
+| Parámetro | Tipo | Ejemplo |
+|---|---|---|
+| `productoId` | `Long` | `1` |
+| `fechaInicio` | `LocalDateTime` | `2026-07-01T00:00:00` |
+| `fechaFin` | `LocalDateTime` | `2026-07-30T23:59:59` |
+| `campoModificado` | `String` | `precio` |
 
-## Usuarios
+## Ejecución
 
-- Registro de usuarios.
-- Inicio de sesión.
-- Contraseñas cifradas con BCrypt.
-- Autenticación mediante JWT.
-
----
-
-## Productos
-
-Permite:
-
-- Registrar productos.
-- Consultar productos.
-- Actualizar productos.
-- Eliminar productos.
-
-Cada producto almacena:
-
-- Nombre.
-- Categoría.
-- Precio.
-
----
-
-## Bodegas
-
-Permite:
-
-- Registrar bodegas.
-- Consultar bodegas.
-- Actualizar bodegas.
-- Eliminar bodegas.
-
-Cada bodega almacena:
-
-- Nombre.
-- Ubicación.
-- Capacidad.
-- Usuario encargado.
-
----
-
-## Inventario
-
-El inventario controla la cantidad disponible de cada producto en cada bodega.
-
-El stock **no pertenece al producto**, sino al inventario.
-
----
-
-## Movimientos
-
-El sistema registra tres tipos de movimientos:
-
-- ENTRADA
-- SALIDA
-- TRANSFERENCIA
-
-Cada movimiento almacena:
-
-- Fecha.
-- Usuario responsable.
-- Bodega origen.
-- Bodega destino.
-- Productos.
-- Cantidades.
-
-Reglas implementadas:
-
-- Las entradas aumentan el stock.
-- Las salidas disminuyen el stock.
-- Las transferencias descuentan del origen y aumentan en el destino.
-- No se permite stock negativo.
-- No se permiten cantidades menores o iguales a cero.
-
----
-
-## Auditoría
-
-Las operaciones importantes del sistema generan un registro de auditoría.
-
-Se registra:
-
-- Usuario.
-- Fecha.
-- Tipo de operación.
-- Entidad afectada.
-- Identificador de la entidad.
-- Valores anteriores.
-- Valores nuevos.
-
----
-
-# Seguridad
-
-Se implementó Spring Security utilizando autenticación basada en JWT.
-
-Las rutas públicas son:
-
-- /auth/login
-- /auth/register
-- Swagger/OpenAPI
-
-Las demás rutas requieren autenticación mediante token.
-
----
-
-# Documentación
-
-La API puede consultarse mediante Swagger.
-
-```
-http://localhost:8080/swagger-ui/index.html
-```
-
----
-
-# Instalación
-
-## Clonar el proyecto
-
-```bash
-git clone https://github.com/usuario/logitrack.git
-```
-
----
-
-## Configurar PostgreSQL
-
-Crear una base de datos.
-
-Ejemplo:
-
-```
-logitrack
-```
-
-Actualizar el archivo:
-
-```
-application.properties
-```
-
-con los datos de conexión correspondientes.
-
----
-
-## Ejecutar scripts SQL
-
-Ejecutar:
-
-```
-schema.sql
-```
-
-Posteriormente:
-
-```
-data.sql
-```
-
----
-
-## Ejecutar el proyecto
-
-Desde la raíz del proyecto:
+Desde la raíz del proyecto, donde se encuentra `pom.xml`, ejecutar:
 
 ```bash
 mvn spring-boot:run
 ```
 
-o desde el IDE.
+La aplicación utiliza la clase principal existente:
 
----
-
-# Acceso
-
-## Login
-
-```
-http://localhost:8080/login.html
+```text
+src/main/java/com/logitrack/LogitrackApplication.java
 ```
 
----
+No se requiere una clase principal adicional dentro del paquete `examen`.
 
-## Página principal
+## Autenticación JWT
 
+Antes de consultar los reportes se debe obtener un token JWT.
+
+```http
+POST http://localhost:8080/auth/login
 ```
-http://localhost:8080/index.html
+
+Cuerpo JSON:
+
+```json
+{
+  "username": "admin",
+  "password": "Admin123"
+}
 ```
 
----
+El valor recibido en `token` se configura en Thunder Client mediante:
 
-# Pruebas realizadas
+```text
+Auth → Bearer → Bearer Token
+```
 
-Se verificó el correcto funcionamiento de:
+## Evidencias de pruebas en Thunder Client
 
-- Registro de usuarios.
-- Inicio de sesión.
-- Generación y validación de JWT.
-- CRUD de productos.
-- CRUD de bodegas.
-- Registro de movimientos.
-- Entradas de inventario.
-- Salidas de inventario.
-- Transferencias entre bodegas.
-- Actualización automática del inventario.
-- Auditoría de operaciones.
-- Consulta de movimientos por tipo.
-- Consulta de movimientos por usuario.
-- Consulta de movimientos por bodega.
-- Consulta de movimientos por rango de fechas.
-- Documentación Swagger.
+### 1. Inicio de sesión y obtención del token
 
----
+[Abrir imagen de la prueba](evidenciasExamen/01_login_token.png)
 
-# Autor
+![Inicio de sesión y token](evidenciasExamen/01_login_token.png)
 
-Proyecto desarrollado como trabajo académico para la asignatura de Desarrollo de Software utilizando Spring Boot.
+### 2. Movimientos sin filtros
 
-Autor:
-**Luis Gonzalez**
-**Brayan Espinosa**
+```http
+GET http://localhost:8080/api/reportes/movimientos
+```
 
----
+[Abrir imagen de la prueba](evidenciasExamen/02_movimiento_sin_filtros_b.png)
 
-# Licencia
+![Movimientos sin filtros](evidenciasExamen/02_movimiento_sin_filtros_b.png)
 
-Proyecto desarrollado únicamente con fines académicos.
+### 3. Movimientos filtrados por tipo
+
+```http
+GET http://localhost:8080/api/reportes/movimientos?tipoMovimiento=SALIDA
+```
+
+[Abrir imagen de la prueba](evidenciasExamen/03_movimientos_por_tipo_b.png)
+
+![Movimientos por tipo](evidenciasExamen/03_movimientos_por_tipo_b.png)
+
+### 4. Movimientos filtrados por bodega
+
+```http
+GET http://localhost:8080/api/reportes/movimientos?bodegaId=1
+```
+
+[Abrir imagen de la prueba](evidenciasExamen/04_movimientos_por_bodega_b.png)
+
+![Movimientos por bodega](evidenciasExamen/04_movimientos_por_bodega_b.png)
+
+### 5. Movimientos filtrados por producto
+
+```http
+GET http://localhost:8080/api/reportes/movimientos?productoId=4
+```
+
+[Abrir imagen de la prueba](evidenciasExamen/05_movimientos_por_producto_b.png)
+
+![Movimientos por producto](evidenciasExamen/05_movimientos_por_producto_b.png)
+
+### 6. Movimientos filtrados por tipo y rango de fechas
+
+```http
+GET http://localhost:8080/api/reportes/movimientos?tipoMovimiento=SALIDA&fechaInicio=2026-07-01T00:00:00&fechaFin=2026-07-30T23:59:59
+```
+
+[Abrir imagen de la prueba](evidenciasExamen/06_movimiento_tipo_y_fecha_b.png)
+
+![Movimientos por tipo y fecha](evidenciasExamen/06_movimiento_tipo_y_fecha_b.png)
+
+### 7. Auditorías sin filtros
+
+```http
+GET http://localhost:8080/api/reportes/auditoria
+```
+
+[Abrir imagen de la prueba](evidenciasExamen/07_auditorias_sin_filtro_b.png)
+
+![Auditorías sin filtros](evidenciasExamen/07_auditorias_sin_filtro_b.png)
+
+### 8. Auditorías filtradas por producto
+
+```http
+GET http://localhost:8080/api/reportes/auditoria?productoId=1
+```
+
+[Abrir imagen de la prueba](evidenciasExamen/08_auditorias_por_producto_b.png)
+
+![Auditorías por producto](evidenciasExamen/08_auditorias_por_producto_b.png)
+
+### 9. Auditorías filtradas por campo modificado
+
+```http
+GET http://localhost:8080/api/reportes/auditoria?campoModificado=precio
+```
+
+[Abrir imagen de la prueba](evidenciasExamen/09_auditorias_por_campo_b.png)
+
+![Auditorías por campo](evidenciasExamen/09_auditorias_por_campo_b.png)
+
+### 10. Auditorías con combinación de filtros
+
+```http
+GET http://localhost:8080/api/reportes/auditoria?productoId=1&campoModificado=precio&fechaInicio=2026-07-01T00:00:00&fechaFin=2026-07-30T23:59:59
+```
+
+[Abrir imagen de la prueba](evidenciasExamen/10_auditorias_combinacion_filtros.png)
+
+![Auditorías con filtros combinados](evidenciasExamen/10_auditorias_combinacion_filtros.png)
+
+## Resultados obtenidos
+
+Las pruebas realizadas en Thunder Client muestran:
+
+- autenticación JWT correcta
+- respuestas HTTP `200 OK`
+- consulta general de movimientos
+- filtro por tipo de movimiento
+- filtro por bodega
+- filtro por producto
+- filtro por rango de fechas
+- consulta general de auditorías
+- filtro de auditorías por producto
+- filtro por campo modificado
+- combinación de filtros de auditoría
+
+## Consideraciones técnicas
+
+- Los filtros son opcionales.
+- Cuando no se envía un parámetro, ese filtro no se aplica.
+- Los rangos de fecha se validan en el servicio.
+- La consulta de movimientos usa `DISTINCT` para evitar registros duplicados.
+- El filtro de bodega busca tanto en la bodega de origen como en la bodega de destino.
+- El filtro de producto en movimientos utiliza la relación con `DetalleMovimiento`.
+- El campo modificado se busca dentro de `valoresAnteriores` y `valoresNuevos`, porque la entidad `Auditoria` no posee un atributo específico llamado `campoModificado`.
+- Las rutas están protegidas y requieren un token JWT válido.
+
+## Entregables
+
+- Código fuente del módulo de reportes.
+- Repositorios con consultas JPA.
+- Servicio con validaciones y filtros.
+- Controlador con endpoints GET.
+- Evidencias de pruebas realizadas en Thunder Client.
+- Repositorio del proyecto en GitHub.
