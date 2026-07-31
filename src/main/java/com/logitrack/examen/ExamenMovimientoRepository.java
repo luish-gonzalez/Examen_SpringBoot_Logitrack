@@ -29,13 +29,13 @@ public interface ExamenMovimientoRepository
                 :tipoMovimiento IS NULL
                 OR movimiento.tipo = :tipoMovimiento
             )
-            AND (
-                :fechaInicio IS NULL
-                OR movimiento.fecha >= :fechaInicio
+            AND movimiento.fecha >= COALESCE(
+                :fechaInicio,
+                movimiento.fecha
             )
-            AND (
-                :fechaFin IS NULL
-                OR movimiento.fecha <= :fechaFin
+            AND movimiento.fecha <= COALESCE(
+                :fechaFin,
+                movimiento.fecha
             )
             ORDER BY movimiento.fecha DESC
             """)
