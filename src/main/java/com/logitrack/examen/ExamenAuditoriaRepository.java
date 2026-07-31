@@ -21,21 +21,32 @@ public interface ExamenAuditoriaRepository
                     AND auditoria.entidadId = :productoId
                 )
             )
-            AND (
-                :fechaInicio IS NULL
-                OR auditoria.fechaHora >= :fechaInicio
+            AND auditoria.fechaHora >= COALESCE(
+                :fechaInicio,
+                auditoria.fechaHora
+            )
+            AND auditoria.fechaHora <= COALESCE(
+                :fechaFin,
+                auditoria.fechaHora
             )
             AND (
-                :fechaFin IS NULL
-                OR auditoria.fechaHora <= :fechaFin
-            )
-            AND (
-                :campoModificado IS NULL
-                OR TRIM(:campoModificado) = ''
+                COALESCE(:campoModificado, '') = ''
                 OR LOWER(COALESCE(auditoria.valoresAnteriores, ''))
-                    LIKE LOWER(CONCAT('%', :campoModificado, '%'))
+                    LIKE LOWER(
+                        CONCAT(
+                            '%',
+                            COALESCE(:campoModificado, ''),
+                            '%'
+                        )
+                    )
                 OR LOWER(COALESCE(auditoria.valoresNuevos, ''))
-                    LIKE LOWER(CONCAT('%', :campoModificado, '%'))
+                    LIKE LOWER(
+                        CONCAT(
+                            '%',
+                            COALESCE(:campoModificado, ''),
+                            '%'
+                        )
+                    )
             )
             ORDER BY auditoria.fechaHora DESC
             """)
